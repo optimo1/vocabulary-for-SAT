@@ -281,6 +281,27 @@
         border-radius: 8px;
       }
 
+      .mnemonic {
+        font-size: 0.9rem;
+        color: #facc15;
+        margin-top: 4px;
+        padding: 8px 12px;
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+        font-weight: 600;
+      }
+
+      .flashcard-mnemonic {
+        margin-top: 12px;
+        padding: 10px 14px;
+        background: rgba(250, 204, 21, 0.1);
+        border-left: 3px solid #facc15;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        color: #fef08a;
+        font-style: italic;
+      }
+
       .matching-container {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -329,6 +350,25 @@
         color: var(--white);
         opacity: 0.6;
         pointer-events: none;
+      }
+
+      .matching-item.incorrect {
+        border-color: #ef4444;
+        background: #fee2e2;
+        animation: shake 0.4s ease;
+      }
+
+      @keyframes shake {
+        0%,
+        100% {
+          transform: translateX(0);
+        }
+        25% {
+          transform: translateX(-4px);
+        }
+        75% {
+          transform: translateX(4px);
+        }
       }
 
       .sentence-container {
@@ -629,6 +669,9 @@
               <div class="feedback" id="sentenceFeedback"></div>
             </div>
             <div class="controls">
+              <button class="btn btn-secondary" id="prevSentenceBtn">
+                ← Back
+              </button>
               <button class="btn" id="checkSentenceBtn">Check Answer</button>
               <button class="btn btn-success" id="nextSentenceBtn">
                 Next →
@@ -682,6 +725,8 @@
         phase1Data: null,
         phase2Matches: {},
         phase2Selected: null,
+        phase2Offset: 0,
+        phase2CurrentBatchSize: 0,
         phase2CorrectPairs: [],
         phase3Data: null,
         phase4Data: null,
@@ -972,7 +1017,7 @@
         document.getElementById("phaseTitle").textContent =
           "Phase 1: Discovery";
         document.getElementById("phaseDescription").textContent =
-          "Explore each word. Click the card to reveal its meaning.";
+          "Explore each word. Click the card to reveal its meaning, an example, and a mnemonic.";
         showFlashcard();
       }
 
@@ -989,11 +1034,15 @@
         document.getElementById("flashcardWord").textContent = word.word;
         document.getElementById("flashcardMeaning").textContent = word.meaning;
 
-        // Show examples
+        // Show one example + mnemonic (both hidden until meaning revealed)
         const examplesEl = document.getElementById("flashcardExamples");
-        examplesEl.innerHTML = word.examples
-          .map((ex) => `<div class="example">"${ex}"</div>`)
-          .join("");
+        const example =
+          word.examples && word.examples.length ? word.examples[0] : "";
+        const mnemonic = word.mnemonic || "";
+        examplesEl.innerHTML = `
+          ${example ? `<div class="example">"${example}"</div>` : ""}
+          ${mnemonic ? `<div class="mnemonic">${mnemonic}</div>` : ""}
+        `;
 
         document
           .getElementById("flashcardMeaning")
@@ -1027,14 +1076,25 @@
         state.currentIndex = 0;
         state.phase2Matches = {};
         state.phase2Selected = null;
+        state.phase2Offset = 0;
+        state.phase2CurrentBatchSize = 0;
         showPhase(2);
 
         document.getElementById("phaseTitle").textContent =
           "Phase 2: Match Maker";
         document.getElementById("phaseDescription").textContent =
-          "Match each word to one of its synonyms. Click a word, then click its synonym.";
+          "Match each word to one of its synonyms. Click a word, then click its synonym card.";
 
         renderMatchingGame();
+      }
+
+      function getPhase2Definition(wordObj) {
+        const key = (wordObj.word || "").toLowerCase();
+        const synonyms = synonymMap[key];
+        if (synonyms && synonyms.length) {
+          return synonyms.join(", ");
+        }
+        return wordObj.meaning || "";
       }
 
       function renderMatchingGame() {
@@ -1044,30 +1104,23 @@
         wordsColumn.innerHTML = "";
         defsColumn.innerHTML = "";
 
-        const wordsSubset = state.words.slice(0, 8);
+        const batchSize = 8;
+        const start = state.phase2Offset || 0;
+        const end = Math.min(start + batchSize, state.words.length);
+        const wordsSubset = state.words.slice(start, end);
 
-        // Create pairs: each word with one randomly selected synonym
-        const correctPairs = wordsSubset.map((wordObj) => ({
-          word: wordObj.word,
-          synonym:
-            wordObj.synonyms[
-              Math.floor(Math.random() * wordObj.synonyms.length)
-            ],
-        }));
+        if (!wordsSubset.length) {
+          startPhase3();
+          return;
+        }
 
-        // Collect all synonyms from the full word list for wrong options
-        const allSynonyms = state.words.flatMap((w) => w.synonyms);
-        const wrongSynonyms = allSynonyms
-          .filter((syn) => !correctPairs.some((cp) => cp.synonym === syn))
-          .sort(() => Math.random() - 0.5)
-          .slice(0, 8); // Add 8 wrong options
+        state.phase2Matches = {};
+        state.phase2Selected = null;
+        state.phase2CurrentBatchSize = wordsSubset.length;
 
-        // Combine and shuffle right column
-        const rightColumn = [
-          ...correctPairs.map((cp) => cp.synonym),
-          ...wrongSynonyms,
-        ];
-        const shuffledRight = rightColumn.sort(() => Math.random() - 0.5);
+        const defsSubset = wordsSubset
+          .map((w) => getPhase2Definition(w))
+          .sort(() => Math.random() - 0.5);
 
         // Render words (left column)
         wordsSubset.forEach((wordObj, index) => {
@@ -1081,14 +1134,14 @@
         });
 
         // Render synonyms (right column)
-        shuffledRight.forEach((synonym, index) => {
-          const synEl = document.createElement("div");
-          synEl.className = "matching-item";
-          synEl.textContent = synonym;
-          synEl.dataset.synonym = synonym;
-          synEl.dataset.index = index;
-          synEl.addEventListener("click", () => selectDefinition(synEl));
-          defsColumn.appendChild(synEl);
+        defsSubset.forEach((def, index) => {
+          const defEl = document.createElement("div");
+          defEl.className = "matching-item";
+          defEl.textContent = def;
+          defEl.dataset.definition = def;
+          defEl.dataset.index = index;
+          defEl.addEventListener("click", () => selectDefinition(defEl));
+          defsColumn.appendChild(defEl);
         });
       }
 
@@ -1112,24 +1165,37 @@
           return;
         }
 
-        // Find the correct pair for the selected word
-        const correctPair = state.phase2CorrectPairs.find(
-          (cp) => cp.word === state.phase2Selected,
+        const wordObj = state.words.find(
+          (w) => w.word === state.phase2Selected,
+        );
+        const expectedDef = wordObj ? getPhase2Definition(wordObj) : "";
+        const wordEl = document.querySelector(
+          `#wordsColumn .matching-item[data-word="${state.phase2Selected}"]`,
         );
 
-        if (correctPair && element.dataset.synonym === correctPair.synonym) {
+        if (expectedDef && element.dataset.definition === expectedDef) {
           state.phase2Matches[state.phase2Selected] = true;
           element.classList.add("matched");
-          document
-            .querySelector(`[data-word="${state.phase2Selected}"]`)
-            .classList.add("matched");
+          if (wordEl) {
+            wordEl.classList.add("matched");
+          }
           showFeedback("matchingFeedback", "Correct!", true);
         } else {
+          if (wordEl) {
+            wordEl.classList.add("incorrect");
+          }
+          element.classList.add("incorrect");
           showFeedback(
             "matchingFeedback",
             "Not quite right. Try again!",
             false,
           );
+          setTimeout(() => {
+            if (wordEl) {
+              wordEl.classList.remove("incorrect");
+            }
+            element.classList.remove("incorrect");
+          }, 1500);
         }
 
         document
@@ -1141,9 +1207,16 @@
 
         if (
           Object.keys(state.phase2Matches).length ===
-          Math.min(8, state.words.length)
+          state.phase2CurrentBatchSize
         ) {
-          setTimeout(startPhase3, 1000);
+          setTimeout(() => {
+            state.phase2Offset += state.phase2CurrentBatchSize;
+            if (state.phase2Offset >= state.words.length) {
+              startPhase3();
+            } else {
+              renderMatchingGame();
+            }
+          }, 800);
         }
       }
 
@@ -1178,24 +1251,30 @@
         const wordObj = state.words[state.currentIndex];
         state.phase3Data = wordObj;
 
-        // Pick a random example sentence
-        const example =
-          wordObj.examples[Math.floor(Math.random() * wordObj.examples.length)];
-        // Replace the word with a blank (case-insensitive)
-        const sentence = example.replace(
-          new RegExp(wordObj.word, "gi"),
-          "_____",
-        );
+        const template =
+          sentenceTemplates[state.currentIndex % sentenceTemplates.length];
+        const sentence = template.replace("{word}", "_____");
 
         document.getElementById("sentenceText").innerHTML = sentence.replace(
           "_____",
           '<strong style="color: var(--indigo);">_____</strong>',
         );
-        document.getElementById("blankInput").value = "";
-        document.getElementById("blankInput").className = "blank-input";
-        document.getElementById("blankInput").disabled = false;
-        document.getElementById("sentenceFeedback").classList.remove("show");
+
+        const input = document.getElementById("blankInput");
+        input.value = "";
+        input.className = "blank-input";
+        input.disabled = false;
+
+        const feedback = document.getElementById("sentenceFeedback");
+        feedback.classList.remove("show");
+        feedback.textContent = "";
+
         document.getElementById("checkSentenceBtn").disabled = false;
+
+        const prevBtn = document.getElementById("prevSentenceBtn");
+        if (prevBtn) {
+          prevBtn.disabled = state.currentIndex === 0;
+        }
       }
 
       function checkSentence() {
@@ -1225,9 +1304,63 @@
         state.totalQuestions++;
       }
 
+      function handleLetterInput() {
+        const input = document.getElementById("blankInput");
+        const feedback = document.getElementById("sentenceFeedback");
+
+        if (!state.phase3Data) return;
+
+        const typed = input.value.toLowerCase();
+        const correct = state.phase3Data.word.toLowerCase();
+
+        if (!typed) {
+          input.className = "blank-input";
+          feedback.classList.remove("show");
+          feedback.textContent = "";
+          return;
+        }
+
+        let mismatchIndex = -1;
+        const len = Math.min(typed.length, correct.length);
+        for (let i = 0; i < len; i++) {
+          if (typed[i] !== correct[i]) {
+            mismatchIndex = i;
+            break;
+          }
+        }
+
+        if (mismatchIndex === -1) {
+          // All typed letters match so far
+          feedback.textContent =
+            typed.length === 1
+              ? "First letter is correct."
+              : `Letters 1–${typed.length} are correct so far.`;
+          feedback.className = "feedback show correct";
+
+          if (typed.length === correct.length) {
+            input.className = "blank-input correct";
+          } else {
+            input.className = "blank-input";
+          }
+        } else {
+          feedback.textContent = `Letter ${
+            mismatchIndex + 1
+          } is incorrect. Keep trying.`;
+          feedback.className = "feedback show incorrect";
+          input.className = "blank-input incorrect";
+        }
+      }
+
       function nextSentence() {
         state.currentIndex++;
         showSentence();
+      }
+
+      function prevSentence() {
+        if (state.currentIndex > 0) {
+          state.currentIndex--;
+          showSentence();
+        }
       }
 
       // Phase 4: Synonym Sprint
@@ -1389,13 +1522,17 @@
           .addEventListener("click", () => {
             if (
               Object.keys(state.phase2Matches).length ===
-              Math.min(8, state.words.length)
+              state.phase2CurrentBatchSize
             ) {
-              setTimeout(startPhase3, 500);
+              showFeedback(
+                "matchingFeedback",
+                "All matches in this round are correct!",
+                true,
+              );
             } else {
               showFeedback(
                 "matchingFeedback",
-                "Match all words to continue!",
+                "Match all words in this round to continue!",
                 false,
               );
             }
@@ -1407,10 +1544,16 @@
           .getElementById("nextSentenceBtn")
           .addEventListener("click", nextSentence);
         document
+          .getElementById("prevSentenceBtn")
+          .addEventListener("click", prevSentence);
+        document
           .getElementById("blankInput")
           .addEventListener("keypress", (e) => {
             if (e.key === "Enter") checkSentence();
           });
+        document
+          .getElementById("blankInput")
+          .addEventListener("input", handleLetterInput);
         document
           .getElementById("nextQuizBtn")
           .addEventListener("click", nextQuiz);
