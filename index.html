@@ -637,6 +637,7 @@
               </div>
             </div>
             <div class="controls">
+              <button class="btn btn-secondary" id="prevCardBtn">← Back</button>
               <button class="btn" id="revealBtn">Reveal Meaning</button>
               <button class="btn btn-success" id="nextCardBtn">
                 Next Card →
@@ -1010,6 +1011,27 @@
         updateProgress();
       }
 
+      // Allow jumping directly to any phase (after words are loaded)
+      function goToPhase(phaseNumber) {
+        if (!state.words || state.words.length === 0) return;
+        switch (phaseNumber) {
+          case 1:
+            startPhase1();
+            break;
+          case 2:
+            startPhase2();
+            break;
+          case 3:
+            startPhase3();
+            break;
+          case 4:
+            startPhase4();
+            break;
+          default:
+            break;
+        }
+      }
+
       // Phase 1: Discovery Flashcards
       function startPhase1() {
         state.currentIndex = 0;
@@ -1048,6 +1070,11 @@
           .getElementById("flashcardMeaning")
           .classList.remove("revealed");
         document.getElementById("revealBtn").textContent = "Reveal Meaning";
+
+        const prevBtn = document.getElementById("prevCardBtn");
+        if (prevBtn) {
+          prevBtn.disabled = state.currentIndex === 0;
+        }
       }
 
       function revealMeaning() {
@@ -1069,6 +1096,13 @@
       function nextFlashcard() {
         state.currentIndex++;
         showFlashcard();
+      }
+
+      function prevFlashcard() {
+        if (state.currentIndex > 0) {
+          state.currentIndex--;
+          showFlashcard();
+        }
       }
 
       // Phase 2: Match Maker
@@ -1515,6 +1549,9 @@
           .getElementById("revealBtn")
           .addEventListener("click", revealMeaning);
         document
+          .getElementById("prevCardBtn")
+          .addEventListener("click", prevFlashcard);
+        document
           .getElementById("nextCardBtn")
           .addEventListener("click", nextFlashcard);
         document
@@ -1557,6 +1594,15 @@
         document
           .getElementById("nextQuizBtn")
           .addEventListener("click", nextQuiz);
+
+        // Phase navigation: allow jumping directly to any phase
+        document.querySelectorAll(".phase-dot").forEach((dot) => {
+          const phase = parseInt(dot.getAttribute("data-phase"), 10);
+          if (!Number.isNaN(phase)) {
+            dot.style.cursor = "pointer";
+            dot.addEventListener("click", () => goToPhase(phase));
+          }
+        });
       }
 
       // Start the game
