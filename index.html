@@ -1,0 +1,1423 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SAT Vocabulary Mastery</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --indigo: #6366f1;
+        --indigo-dark: #4f46e5;
+        --slate: #64748b;
+        --slate-light: #94a3b8;
+        --emerald: #10b981;
+        --emerald-dark: #059669;
+        --white: #ffffff;
+        --gray-50: #f8fafc;
+        --gray-100: #f1f5f9;
+        --gray-200: #e2e8f0;
+        --gray-800: #1e293b;
+        --shadow:
+          0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg:
+          0 10px 15px -3px rgba(0, 0, 0, 0.1),
+          0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: linear-gradient(
+          135deg,
+          var(--gray-50) 0%,
+          var(--gray-100) 100%
+        );
+        color: var(--gray-800);
+        min-height: 100vh;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      h1 {
+        color: var(--indigo);
+        font-size: 2rem;
+        margin-bottom: 8px;
+      }
+
+      .subtitle {
+        color: var(--slate);
+        font-size: 1rem;
+      }
+
+      .progress-container {
+        background: var(--white);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 24px;
+        box-shadow: var(--shadow);
+      }
+
+      .progress-bar {
+        height: 12px;
+        background: var(--gray-200);
+        border-radius: 6px;
+        overflow: hidden;
+        margin-bottom: 8px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--indigo), var(--emerald));
+        border-radius: 6px;
+        transition: width 0.4s ease;
+        width: 0%;
+      }
+
+      .progress-text {
+        text-align: center;
+        color: var(--slate);
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      .phase-indicator {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+      }
+
+      .phase-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: var(--gray-200);
+        transition: all 0.3s ease;
+      }
+
+      .phase-dot.active {
+        background: var(--indigo);
+        transform: scale(1.3);
+      }
+
+      .phase-dot.completed {
+        background: var(--emerald);
+      }
+
+      .game-area {
+        background: var(--white);
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: var(--shadow-lg);
+        min-height: 400px;
+        margin-bottom: 24px;
+      }
+
+      .phase-title {
+        color: var(--indigo);
+        font-size: 1.5rem;
+        margin-bottom: 8px;
+        text-align: center;
+      }
+
+      .phase-description {
+        color: var(--slate);
+        text-align: center;
+        margin-bottom: 24px;
+        font-size: 0.95rem;
+      }
+
+      .btn {
+        background: var(--indigo);
+        color: var(--white);
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: var(--shadow);
+      }
+
+      .btn:hover {
+        background: var(--indigo-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .btn:active {
+        transform: translateY(0);
+      }
+
+      .btn-secondary {
+        background: var(--slate);
+      }
+
+      .btn-secondary:hover {
+        background: var(--slate-light);
+      }
+
+      .btn-success {
+        background: var(--emerald);
+      }
+
+      .btn-success:hover {
+        background: var(--emerald-dark);
+      }
+
+      .btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .card-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 24px;
+      }
+
+      .flashcard {
+        width: 100%;
+        max-width: 500px;
+        background: linear-gradient(
+          135deg,
+          var(--indigo) 0%,
+          var(--indigo-dark) 100%
+        );
+        border-radius: 16px;
+        padding: 32px;
+        color: var(--white);
+        text-align: center;
+        cursor: pointer;
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+        box-shadow: var(--shadow-lg);
+        min-height: 250px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .flashcard:hover {
+        transform: scale(1.02);
+        box-shadow:
+          0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+
+      .flashcard-emoji {
+        font-size: 3rem;
+        margin-bottom: 16px;
+      }
+
+      .flashcard-word {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 16px;
+      }
+
+      .flashcard-meaning {
+        font-size: 1.1rem;
+        opacity: 0;
+        max-height: 0;
+        overflow: hidden;
+        transition:
+          opacity 0.4s ease,
+          max-height 0.4s ease;
+      }
+
+      .flashcard-meaning.revealed {
+        opacity: 1;
+        max-height: 200px;
+      }
+
+      .flashcard-examples {
+        margin-top: 16px;
+        padding-top: 12px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition:
+          opacity 0.4s ease,
+          max-height 0.4s ease;
+      }
+
+      .flashcard-meaning.revealed + .flashcard-examples,
+      .flashcard-examples.revealed {
+        opacity: 1;
+        max-height: 300px;
+      }
+
+      .example {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+        font-style: italic;
+        margin-bottom: 8px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+      }
+
+      .matching-container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      @media (max-width: 640px) {
+        .matching-container {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .matching-column {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .matching-item {
+        background: var(--gray-50);
+        border: 2px solid var(--gray-200);
+        border-radius: 8px;
+        padding: 12px 16px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        font-weight: 500;
+      }
+
+      .matching-item:hover {
+        border-color: var(--indigo);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow);
+      }
+
+      .matching-item.selected {
+        border-color: var(--indigo);
+        background: var(--indigo);
+        color: var(--white);
+      }
+
+      .matching-item.matched {
+        border-color: var(--emerald);
+        background: var(--emerald);
+        color: var(--white);
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      .sentence-container {
+        background: var(--gray-50);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+      }
+
+      .sentence-text {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin-bottom: 16px;
+      }
+
+      .blank-input {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid var(--gray-200);
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s ease;
+        margin-bottom: 16px;
+      }
+
+      .blank-input:focus {
+        outline: none;
+        border-color: var(--indigo);
+      }
+
+      .blank-input.correct {
+        border-color: var(--emerald);
+        background: #d1fae5;
+      }
+
+      .blank-input.incorrect {
+        border-color: #ef4444;
+        background: #fee2e2;
+      }
+
+      .quiz-option {
+        background: var(--gray-50);
+        border: 2px solid var(--gray-200);
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 500;
+      }
+
+      .quiz-option:hover {
+        border-color: var(--indigo);
+        transform: translateX(4px);
+        box-shadow: var(--shadow);
+      }
+
+      .quiz-option.selected {
+        border-color: var(--indigo);
+        background: var(--indigo);
+        color: var(--white);
+      }
+
+      .quiz-option.correct {
+        border-color: var(--emerald);
+        background: var(--emerald);
+        color: var(--white);
+      }
+
+      .quiz-option.incorrect {
+        border-color: #ef4444;
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .quiz-question {
+        font-size: 1.2rem;
+        margin-bottom: 16px;
+        color: var(--gray-800);
+      }
+
+      .feedback {
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-top: 16px;
+        font-weight: 500;
+        text-align: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+
+      .feedback.show {
+        opacity: 1;
+      }
+
+      .feedback.correct {
+        background: #d1fae5;
+        color: #065f46;
+      }
+
+      .feedback.incorrect {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .controls {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+      }
+
+      .report-container {
+        text-align: center;
+      }
+
+      .score-circle {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        background: conic-gradient(
+          var(--emerald) calc(var(--score) * 1%),
+          var(--gray-200) 0
+        );
+        margin: 0 auto 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .score-circle::before {
+        content: "";
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        background: var(--white);
+        border-radius: 50%;
+      }
+
+      .score-value {
+        position: relative;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--indigo);
+      }
+
+      .report-section {
+        background: var(--gray-50);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 16px;
+        text-align: left;
+      }
+
+      .report-section h3 {
+        color: var(--indigo);
+        margin-bottom: 12px;
+        font-size: 1.1rem;
+      }
+
+      .word-to-review {
+        background: var(--white);
+        border-left: 4px solid #ef4444;
+        padding: 8px 12px;
+        margin-bottom: 8px;
+        border-radius: 4px;
+      }
+
+      .error-message {
+        background: #fee2e2;
+        color: #991b1b;
+        padding: 16px;
+        border-radius: 8px;
+        margin-bottom: 24px;
+        text-align: center;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--slate);
+      }
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid var(--gray-200);
+        border-top-color: var(--indigo);
+        border-radius: 50%;
+        margin: 0 auto 16px;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      @media (max-width: 640px) {
+        h1 {
+          font-size: 1.5rem;
+        }
+        .game-area {
+          padding: 20px;
+        }
+        .flashcard-word {
+          font-size: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>📚 SAT Vocabulary Mastery</h1>
+        <p class="subtitle">Learn through interactive games</p>
+      </header>
+
+      <div class="progress-container">
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">Loading...</div>
+      </div>
+
+      <div class="phase-indicator" id="phaseIndicator">
+        <div class="phase-dot" data-phase="1"></div>
+        <div class="phase-dot" data-phase="2"></div>
+        <div class="phase-dot" data-phase="3"></div>
+        <div class="phase-dot" data-phase="4"></div>
+      </div>
+
+      <div class="game-area" id="gameArea">
+        <div class="loading" id="loadingState">
+          <div class="spinner"></div>
+          <p>Loading vocabulary...</p>
+        </div>
+
+        <div class="error-message hidden" id="errorMessage">
+          <p>
+            Failed to load vocabulary data. Please make sure vocab.json exists.
+          </p>
+          <button class="btn btn-secondary" onclick="location.reload()">
+            Retry
+          </button>
+        </div>
+
+        <div id="phaseContent" class="hidden">
+          <h2 class="phase-title" id="phaseTitle"></h2>
+          <p class="phase-description" id="phaseDescription"></p>
+
+          <div id="phase1Content" class="hidden">
+            <div class="card-container">
+              <div class="flashcard" id="flashcard">
+                <div class="flashcard-emoji" id="flashcardEmoji">📖</div>
+                <div class="flashcard-word" id="flashcardWord"></div>
+                <div class="flashcard-meaning" id="flashcardMeaning"></div>
+                <div class="flashcard-examples" id="flashcardExamples"></div>
+              </div>
+            </div>
+            <div class="controls">
+              <button class="btn" id="revealBtn">Reveal Meaning</button>
+              <button class="btn btn-success" id="nextCardBtn">
+                Next Card →
+              </button>
+            </div>
+          </div>
+
+          <div id="phase2Content" class="hidden">
+            <div class="matching-container">
+              <div class="matching-column" id="wordsColumn"></div>
+              <div class="matching-column" id="definitionsColumn"></div>
+            </div>
+            <div class="feedback" id="matchingFeedback"></div>
+            <div class="controls">
+              <button class="btn btn-success" id="checkMatchBtn">
+                Check Matches
+              </button>
+            </div>
+          </div>
+
+          <div id="phase3Content" class="hidden">
+            <div class="sentence-container">
+              <p class="sentence-text" id="sentenceText"></p>
+              <input
+                type="text"
+                class="blank-input"
+                id="blankInput"
+                placeholder="Type the word..."
+              />
+              <div class="feedback" id="sentenceFeedback"></div>
+            </div>
+            <div class="controls">
+              <button class="btn" id="checkSentenceBtn">Check Answer</button>
+              <button class="btn btn-success" id="nextSentenceBtn">
+                Next →
+              </button>
+            </div>
+          </div>
+
+          <div id="phase4Content" class="hidden">
+            <div class="quiz-question" id="quizQuestion"></div>
+            <div id="quizOptions"></div>
+            <div class="feedback" id="quizFeedback"></div>
+            <div class="controls">
+              <button class="btn" id="nextQuizBtn">Next →</button>
+            </div>
+          </div>
+
+          <div id="reportContent" class="hidden report-container">
+            <div class="score-circle" id="scoreCircle">
+              <span class="score-value" id="scoreValue">0%</span>
+            </div>
+            <h2 style="color: var(--indigo); margin-bottom: 16px">
+              Final Report
+            </h2>
+            <div class="report-section">
+              <h3>📊 Performance Summary</h3>
+              <p id="summaryText"></p>
+            </div>
+            <div class="report-section" id="reviewSection">
+              <h3>📝 Words to Review</h3>
+              <div id="wordsToReview"></div>
+            </div>
+            <div class="controls">
+              <button class="btn" onclick="location.reload()">
+                Play Again
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Game State
+      const state = {
+        words: [],
+        currentPhase: 1,
+        currentIndex: 0,
+        score: 0,
+        totalQuestions: 0,
+        wrongWords: [],
+        phase1Data: null,
+        phase2Matches: {},
+        phase2Selected: null,
+        phase2CorrectPairs: [],
+        phase3Data: null,
+        phase4Data: null,
+        quizAnswered: false,
+      };
+
+      // Emoji mapping for flashcards
+      const emojis = [
+        "📖",
+        "🎯",
+        "💡",
+        "📝",
+        "🔍",
+        "📚",
+        "✏️",
+        "🎓",
+        "📊",
+        "🌟",
+      ];
+
+      // Synonym pairs (simplified - in production would be more comprehensive)
+      const synonymMap = {
+        abase: ["degrade", "humiliate", "demean"],
+        abate: ["reduce", "lessen", "diminish"],
+        abdicate: ["renounce", "relinquish", "resign"],
+        abduct: ["kidnap", "capture", "seize"],
+        aberration: ["anomaly", "irregularity", "deviation"],
+        abet: ["aid", "assist", "help"],
+        abhor: ["detest", "hate", "loathe"],
+        abide: ["tolerate", "endure", "remain"],
+        abject: ["wretched", "pitiful", "miserable"],
+        abjure: ["renounce", "reject", "forswear"],
+        abnegation: ["denial", "renunciation", "self-denial"],
+        abort: ["cancel", "terminate", "abandon"],
+        abridge: ["shorten", "curtail", "condense"],
+        abrogate: ["repeal", "revoke", "annul"],
+        abscond: ["flee", "escape", "disappear"],
+        absolution: ["pardon", "forgiveness", "release"],
+        abstain: ["refrain", "forbear", "avoid"],
+        abstruse: ["obscure", "esoteric", "arcane"],
+        accede: ["agree", "consent", "assent"],
+        accentuate: ["emphasize", "highlight", "stress"],
+        accessible: ["obtainable", "reachable", "available"],
+        acclaim: ["praise", "applause", "commendation"],
+        accolade: ["award", "honor", "tribute"],
+        accommodating: ["obliging", "helpful", "compliant"],
+        accord: ["agreement", "concurrence", "harmony"],
+        accost: ["confront", "approach", "address"],
+        accretion: ["growth", "increase", "accumulation"],
+        acerbic: ["bitter", "caustic", "sarcastic"],
+        acquiesce: ["comply", "consent", "submit"],
+        acrimony: ["bitterness", "rancor", "hostility"],
+        acumen: ["insight", "keenness", "shrewdness"],
+        acute: ["sharp", "keen", "intense"],
+        adamant: ["inflexible", "unyielding", "obstinate"],
+        adept: ["skilled", "proficient", "expert"],
+        adhere: ["stick", "cling", "follow"],
+        admonish: ["warn", "reprove", "chide"],
+        adorn: ["decorate", "embellish", "ornament"],
+        adroit: ["skillful", "dexterous", "clever"],
+        adulation: ["flattery", "praise", "adoration"],
+        adumbrate: ["outline", "sketch", "suggest"],
+        adverse: ["unfavorable", "hostile", "harmful"],
+        advocate: ["support", "defend", "promote"],
+        aerial: ["airborne", "atmospheric", "elevated"],
+        aesthetic: ["artistic", "beautiful", "pleasing"],
+        affable: ["friendly", "amiable", "cordial"],
+        affinity: ["attraction", "liking", "sympathy"],
+        affluent: ["wealthy", "rich", "prosperous"],
+        affront: ["insult", "offense", "slight"],
+        aggrandize: ["increase", "augment", "enhance"],
+        aggregate: ["total", "sum", "collection"],
+        aggrieved: ["offended", "resentful", "injured"],
+        agile: ["nimble", "quick", "spry"],
+        agnostic: ["skeptical", "uncertain", "doubtful"],
+        agriculture: ["farming", "cultivation", "husbandry"],
+        aisle: ["passage", "corridor", "walkway"],
+        alacrity: ["eagerness", "readiness", "promptness"],
+        alias: ["pseudonym", "pen name", "assumed name"],
+        allay: ["alleviate", "relieve", "soothe"],
+        allege: ["claim", "assert", "maintain"],
+        alleviate: ["relieve", "ease", "mitigate"],
+        allocate: ["distribute", "assign", "apportion"],
+        aloof: ["detached", "indifferent", "reserved"],
+        altercation: ["quarrel", "argument", "dispute"],
+        amalgamate: ["merge", "combine", "unite"],
+        ambiguous: ["unclear", "vague", "equivocal"],
+        ambivalent: ["conflicted", "uncertain", "indifferent"],
+        ameliorate: ["improve", "better", "enhance"],
+        amenable: ["compliant", "obliging", "willing"],
+        amenity: ["facility", "convenience", "comfort"],
+        amiable: ["friendly", "pleasant", "affable"],
+        amicable: ["friendly", "peaceful", "harmonious"],
+        amorous: ["loving", "affectionate", "romantic"],
+        amorphous: ["shapeless", "formless", "vague"],
+        anachronistic: ["outdated", "old-fashioned", "antiquated"],
+        analgesic: ["painkiller", "anesthetic", "narcotic"],
+        analogous: ["similar", "comparable", "equivalent"],
+        anarchist: ["rebel", "radical", "insurgent"],
+        anathema: ["curse", "detested thing", "abomination"],
+        anecdote: ["story", "tale", "narrative"],
+        anesthesia: ["numbness", "insensibility", "sedation"],
+        anguish: ["torment", "agony", "distress"],
+        animated: ["lively", "spirited", "energetic"],
+        annex: ["attach", "add", "acquire"],
+        annul: ["cancel", "void", "invalidate"],
+        anomaly: ["irregularity", "abnormality", "deviation"],
+        anonymous: ["unknown", "unidentified", "nameless"],
+        antagonism: ["hostility", "opposition", "enmity"],
+        antecedent: ["predecessor", "forerunner", "precursor"],
+        antediluvian: ["ancient", "archaic", "primordial"],
+        anthology: ["collection", "compilation", "assortment"],
+        antipathy: ["dislike", "hatred", "aversion"],
+        antiquated: ["old-fashioned", "outdated", "obsolete"],
+        antiseptic: ["sterile", "clean", "germ-free"],
+        antithesis: ["opposite", "contrary", "reverse"],
+        anxiety: ["worry", "apprehension", "unease"],
+        apathetic: ["indifferent", "unconcerned", "disinterested"],
+        apocryphal: ["fictitious", "spurious", "false"],
+        appalling: ["shocking", "horrifying", "dreadful"],
+        appease: ["pacify", "placate", "satisfy"],
+        appraise: ["evaluate", "assess", "estimate"],
+        apprehend: ["arrest", "capture", "understand"],
+        approbation: ["praise", "approval", "commendation"],
+        appropriate: ["seize", "take", "acquire"],
+        aquatic: ["water", "marine", "submarine"],
+        arable: ["fertile", "cultivable", "farmable"],
+        arbiter: ["judge", "mediator", "referee"],
+        arbitrary: ["random", "capricious", "unpredictable"],
+        arbitration: ["mediation", "negotiation", "conciliation"],
+        arboreal: ["tree", "wooded", "forested"],
+        arcane: ["mysterious", "obscure", "secret"],
+        archaic: ["ancient", "old-fashioned", "antiquated"],
+        archetypal: ["typical", "classic", "prototypical"],
+        ardor: ["passion", "enthusiasm", "zeal"],
+        arid: ["dry", "parched", "barren"],
+        arrogate: ["claim", "seize", "appropriate"],
+        artifact: ["relic", "antique", "curio"],
+        artisan: ["craftsman", "artificer", "mechanic"],
+        ascertain: ["determine", "discover", "find out"],
+        ascetic: ["austere", "self-denying", "frugal"],
+        ascribe: ["attribute", "assign", "credit"],
+        aspersion: ["insult", "slander", "defamation"],
+        aspire: ["desire", "aim", "strive"],
+        assail: ["attack", "assault", "bombard"],
+        assess: ["evaluate", "appraise", "estimate"],
+        assiduous: ["diligent", "industrious", "sedulous"],
+        assuage: ["relieve", "alleviate", "pacify"],
+        astute: ["shrewd", "clever", "cunning"],
+        asylum: ["refuge", "sanctuary", "haven"],
+        atone: ["expiate", "make amends", "compensate"],
+        atrophy: ["waste", "deteriorate", "degenerate"],
+        attain: ["achieve", "accomplish", "reach"],
+        attribute: ["characteristic", "quality", "trait"],
+        atypical: ["unusual", "abnormal", "irregular"],
+        audacious: ["bold", "daring", "reckless"],
+        audible: ["hearable", "perceptible", "detectable"],
+        augment: ["increase", "enlarge", "expand"],
+        auspicious: ["favorable", "propitious", "promising"],
+        austere: ["severe", "stern", "strict"],
+        avarice: ["greed", "cupidity", "acquisitiveness"],
+        avenge: ["retaliate", "revenge", "requite"],
+        aversion: ["dislike", "hatred", "detestation"],
+      };
+
+      // Sentences for Phase 3
+      const sentenceTemplates = [
+        "The politician tried to {word} his opponent by spreading false rumors.",
+        "She decided to {word} from eating sweets to improve her health.",
+        "His {word} nature made him reluctant to accept help from others.",
+        "The teacher will {word} the student's essay to determine its quality.",
+        "To {word} means to renounce a position of power.",
+        "The company plans to {word} its operations into new markets.",
+        "His {word} remarks offended many people at the dinner.",
+        "The artist used vibrant colors to {word} the beauty of the landscape.",
+        "A {word} person is one who is friendly and easy to talk to.",
+        "The scientist made an {word} discovery that challenged existing theories.",
+      ];
+
+      // Initialize
+      async function init() {
+        console.log("Initializing game...");
+        try {
+          await loadWords();
+          console.log("Words loaded successfully, setting up event listeners");
+          document.getElementById("loadingState").classList.add("hidden");
+          document.getElementById("phaseContent").classList.remove("hidden");
+          setupEventListeners();
+          startPhase1();
+        } catch (error) {
+          console.error("Initialization failed:", error);
+          document.getElementById("loadingState").classList.add("hidden");
+          const errorEl = document.getElementById("errorMessage");
+          errorEl.classList.remove("hidden");
+          errorEl.innerHTML = `
+            <p>❌ Failed to load vocabulary data.</p>
+            <p style="font-size: 0.9rem; margin-top: 8px;">Error: ${error.message}</p>
+            <p style="font-size: 0.85rem; margin-top: 8px; color: #64748b;">
+              Make sure vocab.json is in the same folder as this HTML file.<br>
+              Open browser console (F12) for more details.
+            </p>
+            <button class="btn btn-secondary" onclick="location.reload()" style="margin-top: 12px;">Retry</button>
+          `;
+        }
+      }
+
+      // Load words from JSON
+      async function loadWords() {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+
+        try {
+          console.log("Attempting to fetch vocab.json...");
+          const response = await fetch("vocab.json", {
+            signal: controller.signal,
+            cache: "force-cache",
+          });
+          clearTimeout(timeoutId);
+
+          console.log("Response status:", response.status, response.statusText);
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          console.log("Loaded words:", data.length, "words");
+          state.words = data;
+          shuffleArray(state.words);
+          console.log("Words shuffled, ready to start");
+        } catch (error) {
+          clearTimeout(timeoutId);
+          console.error("Failed to load words:", error);
+          throw error;
+        }
+      }
+
+      // Fisher-Yates shuffle
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+      }
+
+      // Update progress
+      function updateProgress() {
+        const progress = Math.min(((state.currentPhase - 1) / 4) * 100, 100);
+        document.getElementById("progressFill").style.width = progress + "%";
+        document.getElementById("progressText").textContent =
+          state.currentPhase <= 4
+            ? `Phase ${state.currentPhase} of 4 • ${state.words.length} words`
+            : `Report • ${state.words.length} words`;
+
+        document.querySelectorAll(".phase-dot").forEach((dot, index) => {
+          dot.classList.remove("active", "completed");
+          if (index + 1 === state.currentPhase) {
+            dot.classList.add("active");
+          } else if (index + 1 < state.currentPhase) {
+            dot.classList.add("completed");
+          }
+        });
+      }
+
+      // Show phase content
+      function showPhase(phaseNumber) {
+        document
+          .querySelectorAll('[id^="phase"][id$="Content"]:not(#phaseContent)')
+          .forEach((el) => {
+            el.classList.add("hidden");
+          });
+        document.getElementById("reportContent").classList.add("hidden");
+
+        if (phaseNumber === 5) {
+          document.getElementById("reportContent").classList.remove("hidden");
+        } else {
+          const phaseEl = document.getElementById(`phase${phaseNumber}Content`);
+          if (phaseEl) phaseEl.classList.remove("hidden");
+        }
+        state.currentPhase = phaseNumber;
+        updateProgress();
+      }
+
+      // Phase 1: Discovery Flashcards
+      function startPhase1() {
+        state.currentIndex = 0;
+        showPhase(1);
+        document.getElementById("phaseTitle").textContent =
+          "Phase 1: Discovery";
+        document.getElementById("phaseDescription").textContent =
+          "Explore each word. Click the card to reveal its meaning.";
+        showFlashcard();
+      }
+
+      function showFlashcard() {
+        if (state.currentIndex >= state.words.length) {
+          startPhase2();
+          return;
+        }
+
+        const word = state.words[state.currentIndex];
+        const emoji = emojis[state.currentIndex % emojis.length];
+
+        document.getElementById("flashcardEmoji").textContent = emoji;
+        document.getElementById("flashcardWord").textContent = word.word;
+        document.getElementById("flashcardMeaning").textContent = word.meaning;
+
+        // Show examples
+        const examplesEl = document.getElementById("flashcardExamples");
+        examplesEl.innerHTML = word.examples
+          .map((ex) => `<div class="example">"${ex}"</div>`)
+          .join("");
+
+        document
+          .getElementById("flashcardMeaning")
+          .classList.remove("revealed");
+        document.getElementById("revealBtn").textContent = "Reveal Meaning";
+      }
+
+      function revealMeaning() {
+        const meaningEl = document.getElementById("flashcardMeaning");
+        const examplesEl = document.getElementById("flashcardExamples");
+        const btn = document.getElementById("revealBtn");
+
+        if (meaningEl.classList.contains("revealed")) {
+          meaningEl.classList.remove("revealed");
+          examplesEl.classList.remove("revealed");
+          btn.textContent = "Reveal Meaning";
+        } else {
+          meaningEl.classList.add("revealed");
+          examplesEl.classList.add("revealed");
+          btn.textContent = "Hide Meaning";
+        }
+      }
+
+      function nextFlashcard() {
+        state.currentIndex++;
+        showFlashcard();
+      }
+
+      // Phase 2: Match Maker
+      function startPhase2() {
+        state.currentIndex = 0;
+        state.phase2Matches = {};
+        state.phase2Selected = null;
+        showPhase(2);
+
+        document.getElementById("phaseTitle").textContent =
+          "Phase 2: Match Maker";
+        document.getElementById("phaseDescription").textContent =
+          "Match each word to one of its synonyms. Click a word, then click its synonym.";
+
+        renderMatchingGame();
+      }
+
+      function renderMatchingGame() {
+        const wordsColumn = document.getElementById("wordsColumn");
+        const defsColumn = document.getElementById("definitionsColumn");
+
+        wordsColumn.innerHTML = "";
+        defsColumn.innerHTML = "";
+
+        const wordsSubset = state.words.slice(0, 8);
+
+        // Create pairs: each word with one randomly selected synonym
+        const correctPairs = wordsSubset.map((wordObj) => ({
+          word: wordObj.word,
+          synonym:
+            wordObj.synonyms[
+              Math.floor(Math.random() * wordObj.synonyms.length)
+            ],
+        }));
+
+        // Collect all synonyms from the full word list for wrong options
+        const allSynonyms = state.words.flatMap((w) => w.synonyms);
+        const wrongSynonyms = allSynonyms
+          .filter((syn) => !correctPairs.some((cp) => cp.synonym === syn))
+          .sort(() => Math.random() - 0.5)
+          .slice(0, 8); // Add 8 wrong options
+
+        // Combine and shuffle right column
+        const rightColumn = [
+          ...correctPairs.map((cp) => cp.synonym),
+          ...wrongSynonyms,
+        ];
+        const shuffledRight = rightColumn.sort(() => Math.random() - 0.5);
+
+        // Render words (left column)
+        wordsSubset.forEach((wordObj, index) => {
+          const wordEl = document.createElement("div");
+          wordEl.className = "matching-item";
+          wordEl.textContent = wordObj.word;
+          wordEl.dataset.word = wordObj.word;
+          wordEl.dataset.index = index;
+          wordEl.addEventListener("click", () => selectWord(wordEl));
+          wordsColumn.appendChild(wordEl);
+        });
+
+        // Render synonyms (right column)
+        shuffledRight.forEach((synonym, index) => {
+          const synEl = document.createElement("div");
+          synEl.className = "matching-item";
+          synEl.textContent = synonym;
+          synEl.dataset.synonym = synonym;
+          synEl.dataset.index = index;
+          synEl.addEventListener("click", () => selectDefinition(synEl));
+          defsColumn.appendChild(synEl);
+        });
+      }
+
+      function selectWord(element) {
+        document
+          .querySelectorAll("#wordsColumn .matching-item")
+          .forEach((el) => {
+            el.classList.remove("selected");
+          });
+        element.classList.add("selected");
+        state.phase2Selected = element.dataset.word;
+      }
+
+      function selectDefinition(element) {
+        if (!state.phase2Selected) {
+          showFeedback(
+            "matchingFeedback",
+            "Please select a word first.",
+            false,
+          );
+          return;
+        }
+
+        // Find the correct pair for the selected word
+        const correctPair = state.phase2CorrectPairs.find(
+          (cp) => cp.word === state.phase2Selected,
+        );
+
+        if (correctPair && element.dataset.synonym === correctPair.synonym) {
+          state.phase2Matches[state.phase2Selected] = true;
+          element.classList.add("matched");
+          document
+            .querySelector(`[data-word="${state.phase2Selected}"]`)
+            .classList.add("matched");
+          showFeedback("matchingFeedback", "Correct!", true);
+        } else {
+          showFeedback(
+            "matchingFeedback",
+            "Not quite right. Try again!",
+            false,
+          );
+        }
+
+        document
+          .querySelectorAll("#wordsColumn .matching-item")
+          .forEach((el) => {
+            el.classList.remove("selected");
+          });
+        state.phase2Selected = null;
+
+        if (
+          Object.keys(state.phase2Matches).length ===
+          Math.min(8, state.words.length)
+        ) {
+          setTimeout(startPhase3, 1000);
+        }
+      }
+
+      function showFeedback(elementId, message, isCorrect) {
+        const feedback = document.getElementById(elementId);
+        feedback.textContent = message;
+        feedback.className =
+          "feedback show " + (isCorrect ? "correct" : "incorrect");
+        setTimeout(() => {
+          feedback.classList.remove("show");
+        }, 2000);
+      }
+
+      // Phase 3: Context Mastery
+      function startPhase3() {
+        state.currentIndex = 0;
+        showPhase(3);
+
+        document.getElementById("phaseTitle").textContent =
+          "Phase 3: Context Mastery";
+        document.getElementById("phaseDescription").textContent =
+          "Fill in the blank with the correct word from the context.";
+        showSentence();
+      }
+
+      function showSentence() {
+        if (state.currentIndex >= state.words.length) {
+          startPhase4();
+          return;
+        }
+
+        const wordObj = state.words[state.currentIndex];
+        state.phase3Data = wordObj;
+
+        // Pick a random example sentence
+        const example =
+          wordObj.examples[Math.floor(Math.random() * wordObj.examples.length)];
+        // Replace the word with a blank (case-insensitive)
+        const sentence = example.replace(
+          new RegExp(wordObj.word, "gi"),
+          "_____",
+        );
+
+        document.getElementById("sentenceText").innerHTML = sentence.replace(
+          "_____",
+          '<strong style="color: var(--indigo);">_____</strong>',
+        );
+        document.getElementById("blankInput").value = "";
+        document.getElementById("blankInput").className = "blank-input";
+        document.getElementById("blankInput").disabled = false;
+        document.getElementById("sentenceFeedback").classList.remove("show");
+        document.getElementById("checkSentenceBtn").disabled = false;
+      }
+
+      function checkSentence() {
+        const input = document.getElementById("blankInput");
+        const answer = input.value.trim().toLowerCase();
+        const correct = state.phase3Data.word.toLowerCase();
+
+        if (answer === correct) {
+          input.className = "blank-input correct";
+          showFeedback("sentenceFeedback", "Correct!", true);
+          state.score++;
+          input.disabled = true;
+          document.getElementById("checkSentenceBtn").disabled = true;
+        } else {
+          input.className = "blank-input incorrect";
+          showFeedback(
+            "sentenceFeedback",
+            `Incorrect. The answer was: ${correct}`,
+            false,
+          );
+          state.wrongWords.push(state.phase3Data);
+          setTimeout(() => {
+            state.currentIndex++;
+            showSentence();
+          }, 2000);
+        }
+        state.totalQuestions++;
+      }
+
+      function nextSentence() {
+        state.currentIndex++;
+        showSentence();
+      }
+
+      // Phase 4: Synonym Sprint
+      function startPhase4() {
+        state.currentIndex = 0;
+        showPhase(4);
+
+        document.getElementById("phaseTitle").textContent =
+          "Phase 4: Synonym Sprint";
+        document.getElementById("phaseDescription").textContent =
+          "Choose the word that is most similar in meaning.";
+        showQuiz();
+      }
+
+      function showQuiz() {
+        if (state.currentIndex >= state.words.length) {
+          showReport();
+          return;
+        }
+
+        state.quizAnswered = false;
+        const wordObj = state.words[state.currentIndex];
+        state.phase4Data = wordObj;
+
+        document.getElementById("quizQuestion").textContent =
+          `Which word is most similar to "${wordObj.word}"?`;
+
+        const correctSynonym = wordObj.synonyms[0];
+        const otherSynonyms = wordObj.synonyms.slice(1);
+        const wrongOptions =
+          otherSynonyms.length >= 3
+            ? otherSynonyms.slice(0, 3)
+            : generateWrongOptions(wordObj.word, 3 - otherSynonyms.length);
+
+        const options = [correctSynonym, ...wrongOptions];
+        shuffleArray(options);
+
+        const optionsContainer = document.getElementById("quizOptions");
+        optionsContainer.innerHTML = "";
+
+        options.forEach((option) => {
+          const optionEl = document.createElement("div");
+          optionEl.className = "quiz-option";
+          optionEl.textContent = option;
+          optionEl.addEventListener("click", () =>
+            selectQuizOption(optionEl, option, correctSynonym),
+          );
+          optionsContainer.appendChild(optionEl);
+        });
+
+        document.getElementById("quizFeedback").classList.remove("show");
+        document.getElementById("nextQuizBtn").disabled = true;
+      }
+
+      function generateWrongOptions(correctWord, count) {
+        const allWords = state.words
+          .filter((w) => w.word !== correctWord)
+          .flatMap((w) => w.synonyms);
+        const shuffled = allWords.sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, count);
+      }
+
+      function selectQuizOption(element, selected, correct) {
+        if (state.quizAnswered) return;
+        state.quizAnswered = true;
+
+        document.querySelectorAll(".quiz-option").forEach((opt) => {
+          opt.style.pointerEvents = "none";
+        });
+
+        const isCorrect = selected === correct;
+        element.classList.add(isCorrect ? "correct" : "incorrect");
+
+        if (!isCorrect) {
+          document.querySelectorAll(".quiz-option").forEach((opt) => {
+            if (opt.textContent === correct) {
+              opt.classList.add("correct");
+            }
+          });
+          state.wrongWords.push(state.phase4Data);
+        } else {
+          state.score++;
+        }
+        state.totalQuestions++;
+
+        const feedback = document.getElementById("quizFeedback");
+        feedback.textContent = isCorrect
+          ? "Correct!"
+          : `Incorrect. The answer was: ${correct}`;
+        feedback.className =
+          "feedback show " + (isCorrect ? "correct" : "incorrect");
+        document.getElementById("nextQuizBtn").disabled = false;
+      }
+
+      function nextQuiz() {
+        state.currentIndex++;
+        showQuiz();
+      }
+
+      // Final Report
+      function showReport() {
+        showPhase(5);
+        document.getElementById("phaseTitle").textContent = "";
+        document.getElementById("phaseDescription").textContent = "";
+
+        const percentage = Math.round(
+          (state.score / state.totalQuestions) * 100,
+        );
+        document.getElementById("scoreValue").textContent = percentage + "%";
+        document
+          .getElementById("scoreCircle")
+          .style.setProperty("--score", percentage / 100);
+
+        let summary = "";
+        if (percentage >= 90) {
+          summary = "Outstanding! You have mastered these vocabulary words.";
+        } else if (percentage >= 70) {
+          summary =
+            "Great job! You have a good grasp of these words, but some need more practice.";
+        } else if (percentage >= 50) {
+          summary = "Good effort! Keep practicing to improve your vocabulary.";
+        } else {
+          summary = "Keep learning! Review the words below and try again.";
+        }
+        document.getElementById("summaryText").textContent = summary;
+
+        const reviewSection = document.getElementById("reviewSection");
+        const wordsToReview = document.getElementById("wordsToReview");
+
+        if (state.wrongWords.length === 0) {
+          reviewSection.style.display = "none";
+        } else {
+          reviewSection.style.display = "block";
+          wordsToReview.innerHTML = "";
+          const uniqueWords = [...new Set(state.wrongWords.map((w) => w.word))];
+          uniqueWords.forEach((word) => {
+            const wordObj = state.words.find((w) => w.word === word);
+            const div = document.createElement("div");
+            div.className = "word-to-review";
+            div.innerHTML = `<strong>${word}</strong>: ${wordObj.meaning}`;
+            wordsToReview.appendChild(div);
+          });
+        }
+      }
+
+      // Event Listeners
+      function setupEventListeners() {
+        document
+          .getElementById("flashcard")
+          .addEventListener("click", revealMeaning);
+        document
+          .getElementById("revealBtn")
+          .addEventListener("click", revealMeaning);
+        document
+          .getElementById("nextCardBtn")
+          .addEventListener("click", nextFlashcard);
+        document
+          .getElementById("checkMatchBtn")
+          .addEventListener("click", () => {
+            if (
+              Object.keys(state.phase2Matches).length ===
+              Math.min(8, state.words.length)
+            ) {
+              setTimeout(startPhase3, 500);
+            } else {
+              showFeedback(
+                "matchingFeedback",
+                "Match all words to continue!",
+                false,
+              );
+            }
+          });
+        document
+          .getElementById("checkSentenceBtn")
+          .addEventListener("click", checkSentence);
+        document
+          .getElementById("nextSentenceBtn")
+          .addEventListener("click", nextSentence);
+        document
+          .getElementById("blankInput")
+          .addEventListener("keypress", (e) => {
+            if (e.key === "Enter") checkSentence();
+          });
+        document
+          .getElementById("nextQuizBtn")
+          .addEventListener("click", nextQuiz);
+      }
+
+      // Start the game
+      init();
+    </script>
+  </body>
+</html>
